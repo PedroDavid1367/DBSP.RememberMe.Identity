@@ -5,11 +5,13 @@ using IdentityServer3.Core.Services.Default;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Owin;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DBSP.RememberMe.Identity.Server
 {
-  public class StartUp
+  public class Startup
   {
     public void Configuration(IAppBuilder app)
     {
@@ -57,7 +59,7 @@ namespace DBSP.RememberMe.Identity.Server
           RequireSsl = false,
 
           SiteName = "TripCompany Security Token Service",
-          //SigningCertificate = LoadCertificate(),
+          SigningCertificate = LoadCertificate(),
           IssuerUri = DBSP.RememberMe.Identity.Constants.TripGalleryIssuerUri,
           PublicOrigin = DBSP.RememberMe.Identity.Constants.TripGallerySTSOrigin,
           AuthenticationOptions = new AuthenticationOptions()
@@ -84,6 +86,13 @@ namespace DBSP.RememberMe.Identity.Server
         };
         idsrvApp.UseIdentityServer(options);
       });
+    }
+
+    private X509Certificate2 LoadCertificate()
+    {
+      return new X509Certificate2(
+          string.Format(@"{0}\certificates\idsrv3test.pfx",
+          AppDomain.CurrentDomain.BaseDirectory), "idsrv3test");
     }
   }
 }
